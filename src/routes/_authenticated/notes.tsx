@@ -32,14 +32,14 @@ function NotesPage() {
     },
   });
 
-  const add = async () => {
+    const add = async () => {
     if (!title.trim() && !body.trim()) return;
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) return;
     const { error } = await supabase.from("user_notes").insert({
       user_id: u.user.id,
       title: title || "Untitled",
-      body,
+      content: body,
     });
     if (error) return toast.error(error.message);
     setTitle(""); setBody("");
@@ -82,7 +82,7 @@ function NotesPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <p className="whitespace-pre-wrap text-sm text-muted-foreground">{n.body}</p>
+              <p className="whitespace-pre-wrap text-sm text-muted-foreground">{n.content}</p>
             </CardContent>
           </Card>
         ))}

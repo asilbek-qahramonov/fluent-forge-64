@@ -49,7 +49,7 @@ function WritingPage() {
     const { error } = await supabase.from("writing_submissions").insert({
       user_id: u.user.id,
       prompt,
-      body: text,
+      text,
     });
     setBusy(false);
     if (error) return toast.error(error.message);
@@ -118,7 +118,7 @@ function WritingPage() {
                 <p className="text-sm font-medium">{s.prompt}</p>
                 <Badge variant={s.score ? "default" : "secondary"}>{s.score ? `${s.score}/100` : "Pending"}</Badge>
               </div>
-              <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{s.body}</p>
+              <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{s.text}</p>
             </div>
           ))}
           {submissions.data?.length === 0 && (

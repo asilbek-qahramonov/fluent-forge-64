@@ -49,7 +49,7 @@ function VocabPage() {
                     <CardTitle className="text-lg">{w.word}</CardTitle>
                     <Badge variant="secondary">{w.level ?? "A1"}</Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground">{w.part_of_speech} · {w.pronunciation}</p>
+                  <p className="text-xs text-muted-foreground">{w.part_of_speech} · {w.ipa}</p>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm">{w.definition}</p>
