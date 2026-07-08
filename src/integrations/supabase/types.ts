@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       chat_conversations: {
         Row: {
           created_at: string
@@ -72,6 +90,86 @@ export type Database = {
             columns: ["conversation_id"]
             isOneToOne: false
             referencedRelation: "chat_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coin_tasks: {
+        Row: {
+          config: Json
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          is_repeatable: boolean
+          reward: number
+          sort_order: number
+          task_type: Database["public"]["Enums"]["coin_task_type"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          is_repeatable?: boolean
+          reward?: number
+          sort_order?: number
+          task_type?: Database["public"]["Enums"]["coin_task_type"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          is_repeatable?: boolean
+          reward?: number
+          sort_order?: number
+          task_type?: Database["public"]["Enums"]["coin_task_type"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      coin_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          metadata: Json | null
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          reason: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          reason?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coin_transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -310,38 +408,175 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_orders: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          metadata: Json | null
+          method: Database["public"]["Enums"]["payment_method"]
+          plan_id: string
+          status: Database["public"]["Enums"]["payment_status"]
+          stripe_payment_intent: string | null
+          stripe_session_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          metadata?: Json | null
+          method: Database["public"]["Enums"]["payment_method"]
+          plan_id: string
+          status?: Database["public"]["Enums"]["payment_status"]
+          stripe_payment_intent?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          metadata?: Json | null
+          method?: Database["public"]["Enums"]["payment_method"]
+          plan_id?: string
+          status?: Database["public"]["Enums"]["payment_status"]
+          stripe_payment_intent?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_orders_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "premium_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      premium_plans: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration_days: number
+          features: Json
+          id: string
+          is_active: boolean
+          is_popular: boolean
+          name: string
+          price_coins: number | null
+          price_usd: number
+          sort_order: number
+          stripe_price_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration_days: number
+          features?: Json
+          id?: string
+          is_active?: boolean
+          is_popular?: boolean
+          name: string
+          price_coins?: number | null
+          price_usd: number
+          sort_order?: number
+          stripe_price_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration_days?: number
+          features?: Json
+          id?: string
+          is_active?: boolean
+          is_popular?: boolean
+          name?: string
+          price_coins?: number | null
+          price_usd?: number
+          sort_order?: number
+          stripe_price_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           bio: string | null
+          coins: number
           created_at: string
           display_name: string | null
           id: string
+          is_banned: boolean
+          is_premium: boolean
+          last_daily_bonus_at: string | null
           native_language: string | null
+          premium_until: string | null
+          referral_code: string | null
+          referred_by: string | null
           target_level: Database["public"]["Enums"]["cefr_level"] | null
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          coins?: number
           created_at?: string
           display_name?: string | null
           id: string
+          is_banned?: boolean
+          is_premium?: boolean
+          last_daily_bonus_at?: string | null
           native_language?: string | null
+          premium_until?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
           target_level?: Database["public"]["Enums"]["cefr_level"] | null
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          coins?: number
           created_at?: string
           display_name?: string | null
           id?: string
+          is_banned?: boolean
+          is_premium?: boolean
+          last_daily_bonus_at?: string | null
           native_language?: string | null
+          premium_until?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
           target_level?: Database["public"]["Enums"]["cefr_level"] | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       quiz_attempts: {
         Row: {
@@ -472,6 +707,48 @@ export type Database = {
         }
         Relationships: []
       }
+      user_task_completions: {
+        Row: {
+          completed_at: string
+          completion_date: string
+          id: string
+          metadata: Json | null
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          completion_date?: string
+          id?: string
+          metadata?: Json | null
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          completion_date?: string
+          id?: string
+          metadata?: Json | null
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_task_completions_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "coin_tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_task_completions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_vocabulary: {
         Row: {
           created_at: string
@@ -546,6 +823,50 @@ export type Database = {
         }
         Relationships: []
       }
+      vocabulary_exams: {
+        Row: {
+          answers: Json
+          coins_awarded: number
+          created_at: string
+          duration_seconds: number | null
+          id: string
+          questions: Json
+          score: number
+          total: number
+          user_id: string
+        }
+        Insert: {
+          answers?: Json
+          coins_awarded?: number
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          questions?: Json
+          score?: number
+          total: number
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          coins_awarded?: number
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          questions?: Json
+          score?: number
+          total?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vocabulary_exams_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       writing_submissions: {
         Row: {
           created_at: string
@@ -581,6 +902,60 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      activate_premium: {
+        Args: { _days: number; _user_id: string }
+        Returns: undefined
+      }
+      admin_adjust_coins: {
+        Args: { _amount: number; _reason: string; _user_id: string }
+        Returns: number
+      }
+      admin_grant_premium: {
+        Args: { _days: number; _user_id: string }
+        Returns: undefined
+      }
+      admin_grant_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: undefined
+      }
+      admin_revenue_series: {
+        Args: { _days?: number }
+        Returns: {
+          day: string
+          orders_count: number
+          revenue: number
+        }[]
+      }
+      admin_revoke_premium: { Args: { _user_id: string }; Returns: undefined }
+      admin_revoke_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: undefined
+      }
+      admin_set_ban: {
+        Args: { _banned: boolean; _user_id: string }
+        Returns: undefined
+      }
+      admin_stats: { Args: never; Returns: Json }
+      award_coins: {
+        Args: {
+          _amount: number
+          _metadata?: Json
+          _reason: string
+          _user_id: string
+        }
+        Returns: number
+      }
+      claim_daily_bonus: { Args: { _user_id: string }; Returns: Json }
+      complete_task: {
+        Args: { _task_id: string; _user_id: string }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -588,10 +963,23 @@ export type Database = {
         }
         Returns: boolean
       }
+      redeem_premium_with_coins: {
+        Args: { _plan_id: string; _user_id: string }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
       cefr_level: "A1" | "A2" | "B1" | "B2" | "C1" | "C2"
+      coin_task_type:
+        | "telegram_join"
+        | "daily_login"
+        | "referral"
+        | "lesson_complete"
+        | "quiz_complete"
+        | "vocab_add"
+        | "community_post"
+        | "custom"
       lesson_kind:
         | "video"
         | "reading"
@@ -601,6 +989,8 @@ export type Database = {
         | "speaking"
         | "writing"
         | "quiz"
+      payment_method: "stripe" | "coins"
+      payment_status: "pending" | "paid" | "failed" | "refunded"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -730,6 +1120,16 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "moderator", "user"],
       cefr_level: ["A1", "A2", "B1", "B2", "C1", "C2"],
+      coin_task_type: [
+        "telegram_join",
+        "daily_login",
+        "referral",
+        "lesson_complete",
+        "quiz_complete",
+        "vocab_add",
+        "community_post",
+        "custom",
+      ],
       lesson_kind: [
         "video",
         "reading",
@@ -740,6 +1140,8 @@ export const Constants = {
         "writing",
         "quiz",
       ],
+      payment_method: ["stripe", "coins"],
+      payment_status: ["pending", "paid", "failed", "refunded"],
     },
   },
 } as const
